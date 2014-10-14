@@ -1,0 +1,17 @@
+{
+    "contents" : "rm(list=ls())\nload(url(\"http://bit.ly/dasi_gss_data\"))\ndownload.file(url = \"http://bit.ly/dasi_project_template\", destfile = \"dasi_project_template.Rmd\")\nsource(\"http://bit.ly/dasi_inference\")\n\n",
+    "created" : 1411494317674.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4145412702",
+    "id" : "F4860B40",
+    "lastKnownWriteTime" : 1413290565,
+    "path" : "~/Coursera/Data Analysis and Statistical Inference/DASI/Project.R",
+    "project_path" : "Project.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
