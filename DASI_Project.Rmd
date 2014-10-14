@@ -27,7 +27,7 @@ Insert data section here...
 
 ### Exploratory data analysis:
 
-Insert exploratory data analysis here...
+![Data Exploration]("C:\Users\trobinson\Documents\Coursera\DASI2\Mosaic.pdf"")
 
 ### Inference:
 
