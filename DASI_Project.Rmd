@@ -17,7 +17,9 @@ output: html_document
 
 ### Introduction:
 
-Insert introduction here...
+Is there a relationship between the working Respondent's feelings about losing their job to their confidence in U.S. Financial Institutions?
+did the problems with the U.S Economy in 2007, which were largely due to U.S. Financial Institutions, have an effect on how Worker's feel about the possibility of losing their job?
+In the past, job security was a function of how a Worker felt about the economy. That may have changed to revolve around, not the economy, rather the U.S. Finanacial Instutions.
 
 ### Data:
 
