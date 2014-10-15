@@ -10,6 +10,7 @@ output: html_document
 
 <!-- Enter the code required to load your data in the space below. The data will be loaded but the line of code won't show up in your write up (echo=FALSE) in order to save space-->
 ```{r echo=FALSE}
+load(url("http://bit.ly/dasi_gss_data"))
 
 ```
 
@@ -18,12 +19,19 @@ output: html_document
 ### Introduction:
 
 Is there a relationship between the working Respondent's feelings about losing their job to their confidence in U.S. Financial Institutions?
-did the problems with the U.S Economy in 2007, which were largely due to U.S. Financial Institutions, have an effect on how Worker's feel about the possibility of losing their job?
+Did the problems with the U.S Economy in 2007, which were largely due to U.S. Financial Institutions, have an effect on how Worker's feel about the possibility of losing their job?
 In the past, job security was a function of how a Worker felt about the economy. That may have changed to revolve around, not the economy, rather the U.S. Finanacial Instutions.
 
 ### Data:
 
-Insert data section here...
+The vast majority of GSS data is obtained in face-to-face interviews. Computer-assisted personal interviewing (CAPI) began in the 2002 GSS. Under some conditions when it has proved difficult to arrange an in-person interview with a sampled respondent, GSS interviews may be conducted by telephone. The GSS was first conducted in 1972. Until 1994, it was conducted almost annually (due to funding limitations, there were no GSSs in 1979, 1981, or 1992). Since 1994, the GSS has been conducted in even numbered years. New GSSs are planned for 2008 and 2010.
+Each case is a response to a GSS survey. Each consists of how a person responding to the survey answers each of the question on his or her questionnaire. Each row or case is a survey response while the columns or variables are the answers to each question on the questionnaire (survey). A subset of these observations was taken to limit this analysis to just those Respondents who were currently working at the time of their survey responses. 
+gss$wrkstat = 
+Working Fulltime
+Working Parttime
+Temp
+
+This is an observational study. It is a retrospective observational study seeking to determine if there is a relationship between a person's age and how secure they feel in the job. It is not an experiment. This study is not changing or "experimenting" with the data to determine relationships within the data. This study will not be randomizing cases into treatment and control groups in order to try different experiments on the treatment group to see if they have a effect , correlation or other relationship between the experiment and outcome. We are observing the data already collected and will be analyzing that data to answer a specific question to see if there is a relationship between two data elements.
 
 ### Exploratory data analysis:
 
@@ -36,3 +44,17 @@ Insert inference section here...
 ### Conclusion:
 
 Insert conclusion here...
+
+### References:
+####Data URL
+http://bit.ly/dasi_gss_data 
+
+####Data Citation
+
+Smith, Tom W., Michael Hout, and Peter V. Marsden. General Social Survey, 1972-2012 [Cumulative File]. ICPSR34802-v1. Storrs, CT: Roper Center for Public Opinion Research, University of Connecticut /Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributors], 2013-09-11. doi:10.3886/ICPSR34802.v1
+
+Persistent URL: http://doi.org/10.3886/ICPSR34802.v1
+
+####Other Citations
+
+

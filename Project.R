@@ -27,3 +27,8 @@ missmap(na.gss)
 missmap(na.gss.3)
 
 #na.gss.3 looks like the way to go.
+
+agegroups<-c("Young","Middle","Older","Old")
+
+gss$agefactor<-cut(gss$age,breaks=4,labels=agegroups)
+
