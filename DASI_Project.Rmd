@@ -10,6 +10,11 @@ output: html_document
 
 <!-- Enter the code required to load your data in the space below. The data will be loaded but the line of code won't show up in your write up (echo=FALSE) in order to save space-->
 ```{r echo=FALSE}
+rm(list=ls())
+
+#Load some required packages
+require(Amelia) # missmap needs this
+require(Hmisc) # bystats
 load(url("http://bit.ly/dasi_gss_data"))
 
 ```
@@ -33,14 +38,59 @@ Temp
 
 This is an observational study. It is a retrospective observational study seeking to determine if there is a relationship between a person's age and how secure they feel in the job. It is not an experiment. This study is not changing or "experimenting" with the data to determine relationships within the data. This study will not be randomizing cases into treatment and control groups in order to try different experiments on the treatment group to see if they have a effect , correlation or other relationship between the experiment and outcome. We are observing the data already collected and will be analyzing that data to answer a specific question to see if there is a relationship between two data elements.
 
-### Exploratory data analysis:
+### Exploratory Data Analysis:
+####Step 1 - Subset the gss data to only those rows where Respondents are in (or have been) in the workforce.
+```{r echo=TRUE}
+#Subset the data
+workers <- c("Working Fulltime", "Working Parttime", "Temp Not Working", "Unempl, Laid Off")
+df.gss<-subset(gss,wrkstat %in% workers)
+df.gss$wrkstat<-factor(df.gss$wrkstat)
+```
+####Step 2 - Subset the features in the gss data to only those that might be relevant to this Analysis.
+```{r echo=TRUE}
+fields<-c("year","age","sex","wrkstat","confinan","conbus","joblose","satfin","finrela") #jobsec too sparse. Looks like parsol wasn't asked until after 1993
+df.gss<-gss[,fields]
+dim(df.gss)
+```
 
-![Data Exploration]("C:\Users\trobinson\Documents\Coursera\DASI2\Mosaic.pdf"")
+####Step 3 - Massage data to get rid of NAs.
+Take a look at the data overall. Specifically missing (NA) data in the principal features of interest confinan and joblose
+
+```{r echo=FALSE}
+#Check missing values in the data
+
+par(mar=c(5,1,5,2))
+par(mfrow=c(1,2))
+main<-"Figure 1\nBEFORE\ngss data"
+col<-c("yellow", "black")
+missmap(df.gss,main=main,col=col,legend=FALSE,y.cex=0.001,x.cex=1.0)
+na.gss.3<-subset(df.gss,!is.na(df.gss$confinan) & !is.na(df.gss$joblose),select=fields)
+main<-"Figure 2\nAFTER\nFiltering out NAs"
+col<-c("yellow", "black")
+missmap(na.gss.3,main=main,col=col,legend=FALSE,y.cex=0.001,x.cex=1.0)
+
+```
+
+Figure 1:
+Before any filtering. Lots of missing data in the features of primary interest.
+The dataset has 57,061 rows. Let's subset out the missing data from the primary features (confinan and joblose).
+
+Figure 2: 
+After filtering out rows where features confinan AND joblose contain NA. This leaves us with a dataset of 10,978.
+It is interesting to note that confinan and joblose NAs appear to be related in some way because removing where they BOTH are NAs
+has removed ALL NAs from either one. Looks promising. Let's continue with some inference on this dataset.
+####Step 4 - Explore the data to see if it is ready for Inference
+
+
+```{r echo=FALSE}
+df.gss<-na.gss.3
+
+```
 
 ### Inference:
 
-Insert inference section here...
-
+Checking for Independence
+1. The gss dataset 
 ### Conclusion:
 
 Insert conclusion here...
