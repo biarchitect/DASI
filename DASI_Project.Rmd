@@ -25,18 +25,24 @@ load(url("http://bit.ly/dasi_gss_data"))
 
 The U.S. subprime mortgage crisis was a nationwide banking emergency that coincided with the U.S. recession of December 2007-June 2009.[1]
 There were many causes of the crisis, with commentators assigning different levels of blame to financial institutions, regulators, credit agencies, government housing policies, and consumers, among others.[2] 
-Is there a relationship between the working Respondent's feelings about losing their job to their confidence in U.S. Financial Institutions?
-Did the problems with the U.S Economy in 2007, which were largely due to U.S. Financial Institutions, have an effect on how Worker's feel about the possibility of losing their job?
-In the past, job security was a function of how a Worker felt about the economy. That may have changed to revolve around, not the economy, rather the U.S. Finanacial Instutions.
+
+Did working peoples' feelings about their own job security change as their confidence in the U.S financial Institutions change from before the Financial crisis compared to after the financial crisis years?
+Or more generally, Is there a relationship between a working Respondent's feelings about losing their job to their confidence in U.S. Financial Institutions?
+
+Did the problems with the U.S Economy in 2007/2008, which were largely due to U.S. Financial Institutions greed, short sightedness and lack of Adult Supervision have an effect on how Worker's feel about the possibility of losing their job?
+
 
 ### Data:
 
 The vast majority of GSS data is obtained in face-to-face interviews. Computer-assisted personal interviewing (CAPI) began in the 2002 GSS. Under some conditions when it has proved difficult to arrange an in-person interview with a sampled respondent, GSS interviews may be conducted by telephone. The GSS was first conducted in 1972. Until 1994, it was conducted almost annually (due to funding limitations, there were no GSSs in 1979, 1981, or 1992). Since 1994, the GSS has been conducted in even numbered years. New GSSs are planned for 2008 and 2010.
-Each case is a response to a GSS survey. Each consists of how a person responding to the survey answers each of the question on his or her questionnaire. Each row or case is a survey response while the columns or variables are the answers to each question on the questionnaire (survey). A subset of these observations was taken to limit this analysis to just those Respondents who were currently working at the time of their survey responses. 
-gss$wrkstat = 
-Working Fulltime
-Working Parttime
-Temp
+Each case is a response to a GSS survey. Each consists of how a person responding to the survey answers each of the question on his or her questionnaire. Each row or case is a survey response while the columns or variables are the answers to each question on the questionnaire (survey). A subset of these observations was taken to limit this analysis to just those Respondents who were currently working at the time of their survey responses.[1]
+
+The General Social Survey (GSS) is a survey of a representative sample of the American public. In particular, it is a representative sample of "English speaking persons 18 years of age or over, living in noninstitutional arrangements within the United States".
+The GSS has been conducted either yearly or every other year since 1972 by the National Opinion Research Center (NORC), which is affiliated with the University of Chicago. The survey is funded by the National Science Foundation. In the early years, about 1,500 people were interviewed in each wave. In recent years, between about 3,000 and 4,500 people have been interviewed in each wave. The individuals surveyed are different from year to year.[2]
+
+From 1972 to 1974, quota sampling was used to select the individuals in the sample. Both quota and random sampling were used in 1975 and 1976. Starting in 1977, each sample in the GSS was selected at random.[2]
+
+
 
 This is an observational study. It is a retrospective observational study seeking to determine if there is a relationship between a person's age and how secure they feel in the job. It is not an experiment. This study is not changing or "experimenting" with the data to determine relationships within the data. This study will not be randomizing cases into treatment and control groups in order to try different experiments on the treatment group to see if they have a effect , correlation or other relationship between the experiment and outcome. We are observing the data already collected and will be analyzing that data to answer a specific question to see if there is a relationship between two data elements.
 
@@ -65,11 +71,12 @@ Take a look at the data overall. Specifically missing (NA) data in the principal
 par(mar=c(5,1,5,2))
 par(mfrow=c(1,2))
 main<-"Figure 1\nBEFORE\ngss data"
-col<-c("yellow", "black")
+col<-c(5,4)
+#col<-c("yellow", "black")
 missmap(df.gss,main=main,col=col,legend=FALSE,y.cex=0.001,x.cex=1.0)
 df.gss<-subset(df.gss,!is.na(df.gss$confinan) & !is.na(df.gss$joblose),select=fields)
 main<-"Figure 2\nAFTER\nFiltering out NAs"
-col<-c("yellow", "black")
+
 missmap(df.gss,main=main,col=col,legend=FALSE,y.cex=0.001,x.cex=1.0)
 
 ```
@@ -83,22 +90,45 @@ After filtering out rows where features confinan AND joblose contain NA. This le
 It is interesting to note that confinan and joblose NAs appear to be related in some way because removing where they BOTH are NAs
 has removed ALL NAs from either one. Looks promising. Let's continue with some inference on this dataset.
 
-####Step 4 - Is there a difference between Confidence in Financial Insitutions and Job security in the 2 years leading up to 2007 compared to the two years after 2007?
+####Step 4 - Is there a difference between Confidence in Financial Insitutions and Job security in the 2 years leading up to the Financial crisis of 2007/2008 compared to the two years after?
+
+The gss survey is done every other year, therefore this means the years 2004/2006 and 2010/2012.
 
 ```{r echo=FALSE}
 df.gss06<-df.gss[df.gss$year %in% c(2004,2006),]
 df.gss08<-df.gss[df.gss$year > 2008,]
+#No joblose = Leaving Labor Force in 2004-2012 so get rid of it.
+df.gss06$joblose<-factor(df.gss06$joblose)
+df.gss08$joblose<-factor(df.gss08$joblose)
 
-par(mfrow=c(1,2))
-plot(df.gss06$confinan~df.gss06$joblose);plot(df.gss08$confinan~df.gss08$joblose)
-
-
+par(mfrow=c(1,2),mar=c(1,4,4,1),font.axis=8,mai=c(.2,1,1.5,.1))
+col=c(3,4,5)
+ylab<-"Confidence in U.S. Financial Institutions\n(gss$confinan)"
+sub<-"Feelings of Job Loss Likelihood"
+#plot(df.gss06$confinan~df.gss06$joblose,col=col,ylab=ylab);plot(df.gss08$confinan~df.gss08$joblose,col=col,srt=45)
+main06="2004 - 2006"
+main08="2010 - 2012"
+cex.axis<-0.60
+las<-3
+mtext<-"Feelings of Job Loss Likelihood\n(gss$joblose)"
+mosaicplot(joblose~confinan,data=df.gss06,las=las,cex.axis=cex.axis,col=col,main=main06,ylab=ylab,xlab="")
+mtext(mtext)
+mosaicplot(joblose~confinan,data=df.gss08,las=las,col=col,main=main08,cex.axis=cex.axis,ylab="",xlab="")
+mtext(mtext)
 ```
 
-### Inference:
+Yes, there appears to definitely be something here. Looking at the corners or the extremes of the mosaic plots, we see that the rectangle of "Hardly any"" by "Very likely" of 2010-2012 is much taller then from 2004-2006. Conversely, The rectangle formed from "A Great deal" by "Not likely" is much longer rin 2004 -2006 then 2010 - 2012. Indeed the "A Great Deal" and "Hardly Any" rows appear somewhat swapped between the two timeframes.
 
-Checking for Independence
-1. The gss dataset 
+
+### Inference:
+#### Are the differences between the two groups statistically significant? (As opposed to simply visually different)
+
+#####Checking for Independence
+1. The observations are random and independent of each other [1],[2].
+2. There are 868 observations in the 2004/2006 dataset and 799 in the 2010/2012 dataset. This is greater than 30 
+3. THe number of obervations are <10% of the American population.
+Therefore we can assume the sample distributions are nearly normal.
+
 ### Conclusion:
 
 Insert conclusion here...
@@ -110,9 +140,11 @@ http://bit.ly/dasi_gss_data
 ####Data Citation
 
 
-[2]Smith, Tom W., Michael Hout, and Peter V. Marsden. General Social Survey, 1972-2012 [Cumulative File]. ICPSR34802-v1. Storrs, CT: Roper Center for Public Opinion Research, University of Connecticut /Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributors], 2013-09-11. doi:10.3886/ICPSR34802.v1
+[1]Smith, Tom W., Michael Hout, and Peter V. Marsden. General Social Survey, 1972-2012 [Cumulative File]. ICPSR34802-v1. Storrs, CT: Roper Center for Public Opinion Research, University of Connecticut /Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributors], 2013-09-11. doi:10.3886/ICPSR34802.v1
 
 Persistent URL: http://doi.org/10.3886/ICPSR34802.v1
+
+[2] http://www.du.edu/idea/director/about-gss.html
 
 ####Other Citations
 
