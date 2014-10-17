@@ -15,28 +15,33 @@ workers <- c("Working Fulltime", "Working Parttime", "Temp Not Working", "Unempl
 df.gss<-subset(gss,wrkstat %in% workers)
 df.gss$wrkstat<-factor(df.gss$wrkstat)
 
+#Subset the fields
 
-
-
-table(gss$joblose,useNA="ifany")
-table(gss$confinan,useNA="ifany")
 fields<-c("caseid","year","age","sex","wrkstat","confinan","conbus","joblose","satfin","finrela") #jobsec too sparse. Looks like parsol wasn't asked until after 1993
 df.gss<-df.gss[,fields]
 
-bystats(as.integer(df.gss$confinan),as.integer(df.gss$joblose),as.integer(df.gss$jobsec),fun=function(x)c(Mean=mean(x),Median=median(x)))
-na.gss<-subset(gss,!is.na(gss$confinan) & !is.na(gss$jobsec),select=fields)
-na.gss.1<-subset(gss,!is.na(gss$confinan),select=fields)
-na.gss.2<-subset(gss,!is.na(gss$joblose),select=fields)
-na.gss.3<-subset(df.gss,!is.na(confinan) & !is.na(joblose),select=fields)
-missmap(na.gss.1)
-missmap(na.gss)
-missmap(na.gss.3)
+#Subset values in primary Fields ( remove NA rows)
 
-df.gss<-na.gss.3
+df.gss<-subset(df.gss,!is.na(confinan) & !is.na(joblose),select=fields)
+
+#Take a look
+missmap(df.gss)
+
+#Divide into to datasets; Two years beofre 2007 and two years after 2007
 df.gss06<-df.gss[df.gss$year %in% c(2004,2006),]
-df.gss08<-df.gss[df.gss$year > 2007,]
+df.gss08<-df.gss[df.gss$year > 2008,]
 
-plot(df.gss06$confinan~df.gss06$joblose);plot(df.gss08$confinan~df.gss08$joblose)
+par(mfrow=c(1,2))
+col=c(3,4,5)
+ylab<-"Confidence in U.S. Financial Institution"
+#plot(df.gss06$confinan~df.gss06$joblose,col=col,ylab=ylab);plot(df.gss08$confinan~df.gss08$joblose,col=col,srt=45)
+main06="2004 - 2006"
+main08="2010 - 2012"
+mosaicplot(joblose~confinan,data=df.gss06,col=col,main=main06,ylab=ylab);mosaicplot(joblose~confinan,data=df.gss08,col=col,main=main08,ylab=NULL)
+
+
+#mean(as.integer(df.gss06$confinan));mean(as.integer(df.gss08$confinan))
+
 
 
 

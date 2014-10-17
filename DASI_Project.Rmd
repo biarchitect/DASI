@@ -23,6 +23,8 @@ load(url("http://bit.ly/dasi_gss_data"))
 
 ### Introduction:
 
+The U.S. subprime mortgage crisis was a nationwide banking emergency that coincided with the U.S. recession of December 2007-June 2009.[1]
+There were many causes of the crisis, with commentators assigning different levels of blame to financial institutions, regulators, credit agencies, government housing policies, and consumers, among others.[2] 
 Is there a relationship between the working Respondent's feelings about losing their job to their confidence in U.S. Financial Institutions?
 Did the problems with the U.S Economy in 2007, which were largely due to U.S. Financial Institutions, have an effect on how Worker's feel about the possibility of losing their job?
 In the past, job security was a function of how a Worker felt about the economy. That may have changed to revolve around, not the economy, rather the U.S. Finanacial Instutions.
@@ -44,12 +46,13 @@ This is an observational study. It is a retrospective observational study seekin
 #Subset the data
 workers <- c("Working Fulltime", "Working Parttime", "Temp Not Working", "Unempl, Laid Off")
 df.gss<-subset(gss,wrkstat %in% workers)
+
 df.gss$wrkstat<-factor(df.gss$wrkstat)
 ```
 ####Step 2 - Subset the features in the gss data to only those that might be relevant to this Analysis.
 ```{r echo=TRUE}
 fields<-c("year","age","sex","wrkstat","confinan","conbus","joblose","satfin","finrela") #jobsec too sparse. Looks like parsol wasn't asked until after 1993
-df.gss<-gss[,fields]
+df.gss<-df.gss[,fields]
 dim(df.gss)
 ```
 
@@ -64,10 +67,10 @@ par(mfrow=c(1,2))
 main<-"Figure 1\nBEFORE\ngss data"
 col<-c("yellow", "black")
 missmap(df.gss,main=main,col=col,legend=FALSE,y.cex=0.001,x.cex=1.0)
-na.gss.3<-subset(df.gss,!is.na(df.gss$confinan) & !is.na(df.gss$joblose),select=fields)
+df.gss<-subset(df.gss,!is.na(df.gss$confinan) & !is.na(df.gss$joblose),select=fields)
 main<-"Figure 2\nAFTER\nFiltering out NAs"
 col<-c("yellow", "black")
-missmap(na.gss.3,main=main,col=col,legend=FALSE,y.cex=0.001,x.cex=1.0)
+missmap(df.gss,main=main,col=col,legend=FALSE,y.cex=0.001,x.cex=1.0)
 
 ```
 
@@ -79,11 +82,16 @@ Figure 2:
 After filtering out rows where features confinan AND joblose contain NA. This leaves us with a dataset of 10,978.
 It is interesting to note that confinan and joblose NAs appear to be related in some way because removing where they BOTH are NAs
 has removed ALL NAs from either one. Looks promising. Let's continue with some inference on this dataset.
-####Step 4 - Explore the data to see if it is ready for Inference
 
+####Step 4 - Is there a difference between Confidence in Financial Insitutions and Job security in the 2 years leading up to 2007 compared to the two years after 2007?
 
 ```{r echo=FALSE}
-df.gss<-na.gss.3
+df.gss06<-df.gss[df.gss$year %in% c(2004,2006),]
+df.gss08<-df.gss[df.gss$year > 2008,]
+
+par(mfrow=c(1,2))
+plot(df.gss06$confinan~df.gss06$joblose);plot(df.gss08$confinan~df.gss08$joblose)
+
 
 ```
 
@@ -101,10 +109,13 @@ http://bit.ly/dasi_gss_data
 
 ####Data Citation
 
-Smith, Tom W., Michael Hout, and Peter V. Marsden. General Social Survey, 1972-2012 [Cumulative File]. ICPSR34802-v1. Storrs, CT: Roper Center for Public Opinion Research, University of Connecticut /Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributors], 2013-09-11. doi:10.3886/ICPSR34802.v1
+
+[2]Smith, Tom W., Michael Hout, and Peter V. Marsden. General Social Survey, 1972-2012 [Cumulative File]. ICPSR34802-v1. Storrs, CT: Roper Center for Public Opinion Research, University of Connecticut /Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributors], 2013-09-11. doi:10.3886/ICPSR34802.v1
 
 Persistent URL: http://doi.org/10.3886/ICPSR34802.v1
 
 ####Other Citations
 
+[1] US Business Cycle Expansions and Contractions, NBER, accessed August 9, 2012. http://www.nber.org/cycles.html
 
+[2]Financial Inquiry Commission-Final Report-Retrieved February 2013.  http://fcic.law.stanford.edu/report
