@@ -6,19 +6,6 @@ output: html_document
 ---
 ---
 
-<!-- For more info on RMarkdown see http://rmarkdown.rstudio.com/ -->
-
-<!-- Enter the code required to load your data in the space below. The data will be loaded but the line of code won't show up in your write up (echo=FALSE) in order to save space-->
-```{r echo=FALSE}
-rm(list=ls())
-
-#Load some required packages
-require(Amelia) # missmap needs this
-require(Hmisc) # bystats
-load(url("http://bit.ly/dasi_gss_data"))
-
-```
-
 <!-- In the remainder of the document, add R code chunks as needed -->
 
 ### Introduction:
@@ -26,10 +13,9 @@ load(url("http://bit.ly/dasi_gss_data"))
 The U.S. subprime mortgage crisis was a nationwide banking emergency that coincided with the U.S. recession of December 2007-June 2009.[1]
 There were many causes of the crisis, with commentators assigning different levels of blame to financial institutions, regulators, credit agencies, government housing policies, and consumers, among others.[2] 
 
-Did working peoples' feelings about their own job security change as their confidence in the U.S financial Institutions change from before the Financial crisis compared to after the financial crisis years?
-Or more generally, Is there a relationship between a working Respondent's feelings about losing their job to their confidence in U.S. Financial Institutions?
+Are U.S. working peoples' feelings about their job security related  to their confidence in U.S financial Institutions?
 
-Did the problems with the U.S Economy in 2007/2008, which were largely due to U.S. Financial Institutions greed, short sightedness and lack of Adult Supervision have an effect on how Worker's feel about the possibility of losing their job?
+If there is a relationship then this may indicate changing attitudes in the U.S. creating more of a focus on U.S. Financial Institutions then is healthy for the U.S. and indeed for any society.
 
 
 ### Data:
@@ -42,12 +28,33 @@ The GSS has been conducted either yearly or every other year since 1972 by the N
 
 From 1972 to 1974, quota sampling was used to select the individuals in the sample. Both quota and random sampling were used in 1975 and 1976. Starting in 1977, each sample in the GSS was selected at random.[2]
 
+#### Variables for Analysis
 
+**confinan** Type Categorical (character). Question - I am going to name some institutions in this country. As far as the people running these institutions are concerned, would you say you have a great deal of confidence, only some confidence, or hardly any confidence at all in them? a. Banks and financial institutions.
 
-This is an observational study. It is a retrospective observational study seeking to determine if there is a relationship between a person's age and how secure they feel in the job. It is not an experiment. This study is not changing or "experimenting" with the data to determine relationships within the data. This study will not be randomizing cases into treatment and control groups in order to try different experiments on the treatment group to see if they have a effect , correlation or other relationship between the experiment and outcome. We are observing the data already collected and will be analyzing that data to answer a specific question to see if there is a relationship between two data elements.
+**joblose** Type Categorical (character). Question - Thinking about the next 12 months, how likely do you think it is that you will lose your job or be laid off?
+
+#### Variables for Filtering Data
+**wrktstat** Type Categorical (character).  Last week were you working full time, part time, going to school, keeping house, or what?
+
+**year** Type Ordinal (Integer)  - GSS YEAR FOR THIS RESPONDENT
+
+It is a retrospective observational study seeking to determine if there is a relationship between how secure they feel in the job. It is not an experiment. This study is not changing or "experimenting" with the data to determine relationships within the data. This study will not be randomizing cases into treatment and control groups in order to try different experiments on the treatment group to see if they have a effect , correlation or other relationship between the experiment and outcome. We are observing the data already collected and will be analyzing that data to answer a specific question to see if there is a relationship between two data elements. No casuality inferences to the general population are possible because of this.
+The scope of inference on this dataset will be limited to the variables of interest above filtered on only the years of the survey after 2007/2008, that is 2010 and 2012. The dataset is also being limited to only those who are or have been working. All non-responses (NAs) have also been removed. This makes for a nice tidy dataset of 799 observations. The observations have been randomly sampled from less than 10% of the U.S. population. There are more than 30 within each of the variable grooups of interest. Therefore we can do some statistical inference on this data set in order to make some generalized comments about the working U.S. population and only the working population.
+
 
 ### Exploratory Data Analysis:
 ####Step 1 - Subset the gss data to only those rows where Respondents are in (or have been) in the workforce.
+
+```{r echo=FALSE}
+#rm(list=ls())
+
+#Load some required packages
+require(Amelia) # missmap needs this
+require(Hmisc) # bystats
+load(url("http://bit.ly/dasi_gss_data"))
+```
+
 ```{r echo=TRUE}
 #Subset the data
 workers <- c("Working Fulltime", "Working Parttime", "Temp Not Working", "Unempl, Laid Off")
@@ -87,12 +94,11 @@ The dataset has 57,061 rows. Let's subset out the missing data from the primary 
 
 Figure 2: 
 After filtering out rows where features confinan AND joblose contain NA. This leaves us with a dataset of 10,978.
-It is interesting to note that confinan and joblose NAs appear to be related in some way because removing where they BOTH are NAs
-has removed ALL NAs from either one. Looks promising. Let's continue with some inference on this dataset.
+It is interesting to note that confinan and joblose NAs appear to be related in some way because removing where they BOTH are NAs has removed ALL NAs from either one. Looks promising. Let's continue with some inference on this dataset.
 
-####Step 4 - Is there a difference between Confidence in Financial Insitutions and Job security in the 2 years leading up to the Financial crisis of 2007/2008 compared to the two years after?
+####Step 4 - At a high level let's see how the variables of interest confinan and joblose are related to each other.
 
-The gss survey is done every other year, therefore this means the years 2004/2006 and 2010/2012.
+The gss survey is done every other year, therefore this means the years 2010/2012.
 
 ```{r echo=FALSE}
 df.gss06<-df.gss[df.gss$year %in% c(2004,2006),]
@@ -101,19 +107,21 @@ df.gss08<-df.gss[df.gss$year > 2008,]
 df.gss06$joblose<-factor(df.gss06$joblose)
 df.gss08$joblose<-factor(df.gss08$joblose)
 
-par(mfrow=c(1,2),mar=c(1,4,4,1),font.axis=8,mai=c(.2,1,1.5,.1))
+#par(mfrow=c(1,1),mar=c(.01,5,5,.01),font.axis=8,mai=c(.01,1,1,.01))
+par(mfrow=c(1,1),font.axis=9,font.lab=1.0,mai=c(.01,1,0.50,.01),omi=c(0.01,0.01,0.01,0.01))
 col=c(3,4,5)
 ylab<-"Confidence in U.S. Financial Institutions\n(gss$confinan)"
 sub<-"Feelings of Job Loss Likelihood"
 #plot(df.gss06$confinan~df.gss06$joblose,col=col,ylab=ylab);plot(df.gss08$confinan~df.gss08$joblose,col=col,srt=45)
 main06="2004 - 2006"
 main08="2010 - 2012"
-cex.axis<-0.60
-las<-3
-mtext<-"Feelings of Job Loss Likelihood\n(gss$joblose)"
-mosaicplot(joblose~confinan,data=df.gss06,las=las,cex.axis=cex.axis,col=col,main=main06,ylab=ylab,xlab="")
-mtext(mtext)
-mosaicplot(joblose~confinan,data=df.gss08,las=las,col=col,main=main08,cex.axis=cex.axis,ylab="",xlab="")
+cex.axis<-.80
+las<-5
+adj=1
+mtext<-"Feelings of Job Loss Likelihood (gss$joblose)"
+#mosaicplot(joblose~confinan,data=df.gss06,las=las,cex.axis=cex.axis,col=col,main=main06,ylab=ylab,xlab="")
+#mtext(mtext)
+mosaicplot(joblose~confinan,data=df.gss08,las=las,col=col,main=main08,cex.axis=cex.axis,ylab=ylab,xlab="")
 mtext(mtext)
 ```
 
@@ -124,7 +132,7 @@ Yes, there appears to definitely be something here. Looking at the corners or th
 #### Are the differences between the two groups statistically significant? (As opposed to simply visually different)
 
 #####Checking for Independence
-1. The observations are random and independent of each other [1],[2].
+1. The sampled observations are random and independent of each other [1],[2].
 2. There are 868 observations in the 2004/2006 dataset and 799 in the 2010/2012 dataset. This is greater than 30 
 3. THe number of obervations are <10% of the American population.
 Therefore we can assume the sample distributions are nearly normal.
