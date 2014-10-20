@@ -8,17 +8,17 @@ output: html_document
 
 <!-- In the remainder of the document, add R code chunks as needed -->
 
-### Introduction:
+### Part 1 Introduction:
 
-The U.S. subprime mortgage crisis was a nationwide banking emergency that coincided with the U.S. recession of December 2007-June 2009.[1]
-There were many causes of the crisis, with commentators assigning different levels of blame to financial institutions, regulators, credit agencies, government housing policies, and consumers, among others.[2] 
+The U.S. subprime mortgage crisis was a nationwide banking emergency that coincided with the U.S. recession of December 2007-June 2009.[3]
+There were many causes of the crisis, with commentators assigning different levels of blame to financial institutions, regulators, credit agencies, government housing policies, and consumers, among others.[4] 
 
-Are U.S. working peoples' feelings about their job security related  to their confidence in U.S financial Institutions?
+***Are U.S. working peoples' feelings about their job security related  to their confidence in U.S financial Institutions?***
 
 If there is a relationship then this may indicate changing attitudes in the U.S. creating more of a focus on U.S. Financial Institutions then is healthy for the U.S. and indeed for any society.
 
 
-### Data:
+### Part 2 Data:
 
 The vast majority of GSS data is obtained in face-to-face interviews. Computer-assisted personal interviewing (CAPI) began in the 2002 GSS. Under some conditions when it has proved difficult to arrange an in-person interview with a sampled respondent, GSS interviews may be conducted by telephone. The GSS was first conducted in 1972. Until 1994, it was conducted almost annually (due to funding limitations, there were no GSSs in 1979, 1981, or 1992). Since 1994, the GSS has been conducted in even numbered years. New GSSs are planned for 2008 and 2010.
 Each case is a response to a GSS survey. Each consists of how a person responding to the survey answers each of the question on his or her questionnaire. Each row or case is a survey response while the columns or variables are the answers to each question on the questionnaire (survey). A subset of these observations was taken to limit this analysis to just those Respondents who were currently working at the time of their survey responses.[1]
@@ -43,7 +43,7 @@ It is a retrospective observational study seeking to determine if there is a rel
 The scope of inference on this dataset will be limited to the variables of interest above filtered on only the years of the survey after 2007/2008, that is 2010 and 2012. The dataset is also being limited to only those who are or have been working. All non-responses (NAs) have also been removed. This makes for a nice tidy dataset of 799 observations. The observations have been randomly sampled from less than 10% of the U.S. population. There are more than 30 within each of the variable grooups of interest. Therefore we can do some statistical inference on this data set in order to make some generalized comments about the working U.S. population and only the working population.
 
 
-### Exploratory Data Analysis:
+### Part 3 Exploratory Data Analysis:
 ####Step 1 - Subset the gss data to only those rows where Respondents are in (or have been) in the workforce.
 
 ```{r echo=FALSE}
@@ -52,6 +52,7 @@ The scope of inference on this dataset will be limited to the variables of inter
 #Load some required packages
 require(Amelia) # missmap needs this
 require(Hmisc) # bystats
+require (knitr)
 load(url("http://bit.ly/dasi_gss_data"))
 ```
 
@@ -102,44 +103,81 @@ The gss survey is done every other year, therefore this means the years 2010/201
 
 ```{r echo=FALSE}
 df.gss06<-df.gss[df.gss$year %in% c(2004,2006),]
-df.gss08<-df.gss[df.gss$year > 2008,]
+df.gss08<-df.gss[df.gss$year >= 2008,]
 #No joblose = Leaving Labor Force in 2004-2012 so get rid of it.
 df.gss06$joblose<-factor(df.gss06$joblose)
 df.gss08$joblose<-factor(df.gss08$joblose)
 
 #par(mfrow=c(1,1),mar=c(.01,5,5,.01),font.axis=8,mai=c(.01,1,1,.01))
-par(mfrow=c(1,1),font.axis=9,font.lab=1.0,mai=c(.01,1,0.50,.01),omi=c(0.01,0.01,0.01,0.01))
-col=c(3,4,5)
-ylab<-"Confidence in U.S. Financial Institutions\n(gss$confinan)"
+par(mfrow=c(1,1),font.axis=9,font.lab=1.0,mai=c(.01,1,1,.01),omi=c(0.01,0.01,0.01,0.01))
+col=c(2,3,4,5)
+xlab<-"Confidence in U.S. Financial Institutions\n(gss$confinan)"
 sub<-"Feelings of Job Loss Likelihood"
 #plot(df.gss06$confinan~df.gss06$joblose,col=col,ylab=ylab);plot(df.gss08$confinan~df.gss08$joblose,col=col,srt=45)
 main06="2004 - 2006"
-main08="2010 - 2012"
+main08="2008 - 2012"
 cex.axis<-.80
 las<-5
 adj=1
-mtext<-"Feelings of Job Loss Likelihood (gss$joblose)"
+#mtext<-"Feelings of Job Loss Likelihood (gss$joblose)"
+ylab<-"Feelings of Job Loss Likelihood\n(gss$joblose)"
 #mosaicplot(joblose~confinan,data=df.gss06,las=las,cex.axis=cex.axis,col=col,main=main06,ylab=ylab,xlab="")
 #mtext(mtext)
-mosaicplot(joblose~confinan,data=df.gss08,las=las,col=col,main=main08,cex.axis=cex.axis,ylab=ylab,xlab="")
-mtext(mtext)
+mosaicplot(confinan~joblose,data=df.gss08,las=las,col=col,main=main08,cex.axis=cex.axis,ylab=ylab,xlab="")
+mtext(xlab)
+
 ```
 
-Yes, there appears to definitely be something here. Looking at the corners or the extremes of the mosaic plots, we see that the rectangle of "Hardly any"" by "Very likely" of 2010-2012 is much taller then from 2004-2006. Conversely, The rectangle formed from "A Great deal" by "Not likely" is much longer rin 2004 -2006 then 2010 - 2012. Indeed the "A Great Deal" and "Hardly Any" rows appear somewhat swapped between the two timeframes.
+There is some almost imperceptible deviation within the groups but is it statistically significant? A large deviation from what is expected, from change alone, would suggest that there is a relationship between the two features. However, if there is it isn't very pronounced. Therefore, we would expect a p-value that would be close to the 0.05 signficance level. 
+
+### Part 4 Inference:
+#### Are the differences between the two groups statistically significant?
+
+* It is assumed and stated above that the gss survey is a random sample. Each case/observation is independent of every other.
+* Each case contributes to one cell in the following table.
+
+```{r kable ,results="asis"}
+Total<-sum #Function call for addmargins below. Purely cosmetic
+kable(addmargins(table(df.gss08$joblose,df.gss08$confinan),FUN = Total,quiet=T))
+
+```
+
+* There are more than 5 expected cases in each cell.
 
 
-### Inference:
-#### Are the differences between the two groups statistically significant? (As opposed to simply visually different)
+#####Chi-square Test of Independence
 
-#####Checking for Independence
-1. The sampled observations are random and independent of each other [1],[2].
-2. There are 868 observations in the 2004/2006 dataset and 799 in the 2010/2012 dataset. This is greater than 30 
-3. THe number of obervations are <10% of the American population.
-Therefore we can assume the sample distributions are nearly normal.
+The theorectical requirements have been met to use the Chi-squared Test for Independence. This test will be used because we are dealing with the relatinoship of two categorical variables, each of which has more than 2 levels.  
 
-### Conclusion:
+* ***Null Hypothesis***
 
-Insert conclusion here...
+Job security is not related to Respondents' confidence in U.S. Financial Institutions. 
+
+* ***Alternative Hypothesis***
+
+Job security IS related a Respondent's confidence in U.S. Financial Institutions. The two are related in some fashion. Job security is affected by a Respondent's attitude towards U.S. Financial Instituions.
+
+```{r echo=TRUE}
+chisq.test(df.gss08$confinan,df.gss08$joblose)
+
+```
+
+
+### Part 5 Conclusion:
+
+This analysis tested the hypothesis that a Respondent's feelings of job security is related to their feelings about the U.S. Financial Insitutions at the 5% signficance level using a Chi-squared Test for Independence. We found a p-value of 0.04616. Oh so close! This p-value < 0.05 so we reject the NULL Hypothesis in favor of the Alternative hypothesis that the two variables ARE related. BUT it is too close to be very comfortable with this conclusion. Further analysis is necessary. It is worthwhile to do this same analysis on data in the years pre-2007/2008 Financial crisis and compare that result with this one. 
+
+Here is the same test on the two years directly before the financial crisis. A reasonable assumption might be that a Respondent to the gss survey did not relate as strongly their own job security with their confidence in U.S. Financial Insitutions before the crisis as after. One would think that such a catastrophic event, so mercilessly covered in the media would have a substantial negative effect. Especially since the unemployment rate spiked atfer the Financial Crisis of 2007/2008.
+
+```{r echo=TRUE}
+chisq.test(df.gss06$confinan,df.gss06$joblose)
+
+```
+
+But with a p-value of 0.002751, the two appear even more related BEFORE the crisis than after. This suggests there are confounding variables that are affecting feelings about job security. Reasons other than confidence in U.S. Financial Insitutions.
+
+
+
 
 ### References:
 ####Data URL
@@ -156,6 +194,6 @@ Persistent URL: http://doi.org/10.3886/ICPSR34802.v1
 
 ####Other Citations
 
-[1] US Business Cycle Expansions and Contractions, NBER, accessed August 9, 2012. http://www.nber.org/cycles.html
+[3] US Business Cycle Expansions and Contractions, NBER, accessed August 9, 2012. http://www.nber.org/cycles.html
 
-[2]Financial Inquiry Commission-Final Report-Retrieved February 2013.  http://fcic.law.stanford.edu/report
+[4]Financial Inquiry Commission-Final Report-Retrieved February 2013.  http://fcic.law.stanford.edu/report
