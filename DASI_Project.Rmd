@@ -40,7 +40,7 @@ From 1972 to 1974, quota sampling was used to select the individuals in the samp
 **year** Type Ordinal (Integer)  - GSS YEAR FOR THIS RESPONDENT
 
 It is a retrospective observational study seeking to determine if there is a relationship between how secure they feel in the job. It is not an experiment. This study is not changing or "experimenting" with the data to determine relationships within the data. This study will not be randomizing cases into treatment and control groups in order to try different experiments on the treatment group to see if they have a effect , correlation or other relationship between the experiment and outcome. We are observing the data already collected and will be analyzing that data to answer a specific question to see if there is a relationship between two data elements. No casuality inferences to the general population are possible because of this.
-The scope of inference on this dataset will be limited to the variables of interest above filtered on only the years of the survey after 2007/2008, that is 2010 and 2012. The dataset is also being limited to only those who are or have been working. All non-responses (NAs) have also been removed. This makes for a nice tidy dataset of 799 observations. The observations have been randomly sampled from less than 10% of the U.S. population. There are more than 30 within each of the variable grooups of interest. Therefore we can do some statistical inference on this data set in order to make some generalized comments about the working U.S. population and only the working population.
+The scope of inference on this dataset will be limited to the variables of interest above filtered on only the years of the survey after 2007/2008, that is 2010 and 2012. The dataset is also being limited to only those who are or have been working. All non-responses (NAs) have also been removed. This makes for a nice tidy dataset of 1229 observations. The observations have been randomly sampled from less than 10% of the U.S. population. There are more than 5 within each of the variable groups of interest. Therefore we can do some statistical inference on this data set in order to make some generalized comments about the working U.S. population and only the working population. In other words, it is reasonable to generalize from this data to make general observations about the U.S. Workforce based on this data.
 
 
 ### Part 3 Exploratory Data Analysis:
@@ -101,13 +101,19 @@ It is interesting to note that confinan and joblose NAs appear to be related in 
 
 The gss survey is done every other year, therefore this means the years 2010/2012.
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 df.gss06<-df.gss[df.gss$year %in% c(2004,2006),]
 df.gss08<-df.gss[df.gss$year >= 2008,]
 #No joblose = Leaving Labor Force in 2004-2012 so get rid of it.
 df.gss06$joblose<-factor(df.gss06$joblose)
 df.gss08$joblose<-factor(df.gss08$joblose)
+#
+dim(df.gss06) #Final Size of Analysis Dataset for the years 2004-2006
+#
+dim(df.gss08) #Final Size of Analysis Dataset for the years 2010-2012
+```
 
+```{r echo=FALSE}
 #par(mfrow=c(1,1),mar=c(.01,5,5,.01),font.axis=8,mai=c(.01,1,1,.01))
 par(mfrow=c(1,1),font.axis=9,font.lab=1.0,mai=c(.01,1,1,.01),omi=c(0.01,0.01,0.01,0.01))
 col=c(2,3,4,5)
@@ -117,7 +123,7 @@ sub<-"Feelings of Job Loss Likelihood"
 main06="2004 - 2006"
 main08="2008 - 2012"
 cex.axis<-.80
-las<-5
+las<-4
 adj=1
 #mtext<-"Feelings of Job Loss Likelihood (gss$joblose)"
 ylab<-"Feelings of Job Loss Likelihood\n(gss$joblose)"
@@ -128,7 +134,7 @@ mtext(xlab)
 
 ```
 
-There is some almost imperceptible deviation within the groups but is it statistically significant? A large deviation from what is expected, from change alone, would suggest that there is a relationship between the two features. However, if there is it isn't very pronounced. Therefore, we would expect a p-value that would be close to the 0.05 signficance level. 
+There is some almost imperceptible deviation within the groups but is it statistically significant? A large deviation from what is expected from chance alone, would suggest that there is a relationship between the two features. However, if there is such deviation it isn't very pronounced. Therefore, we would expect a p-value that would be close to the 0.05 signficance level. 
 
 ### Part 4 Inference:
 #### Are the differences between the two groups statistically significant?
@@ -149,23 +155,26 @@ kable(addmargins(table(df.gss08$joblose,df.gss08$confinan),FUN = Total,quiet=T))
 
 The theorectical requirements have been met to use the Chi-squared Test for Independence. This test will be used because we are dealing with the relatinoship of two categorical variables, each of which has more than 2 levels.  
 
-* ***Null Hypothesis***
+* **Null Hypothesis ($H_0$)**
 
 Job security is not related to Respondents' confidence in U.S. Financial Institutions. 
 
-* ***Alternative Hypothesis***
+* **Alternative Hypothesis ($H_A$)**
 
-Job security IS related a Respondent's confidence in U.S. Financial Institutions. The two are related in some fashion. Job security is affected by a Respondent's attitude towards U.S. Financial Instituions.
+Job security IS related to a Respondent's confidence in U.S. Financial Institutions. The two are related in some fashion. Job security is affected by a Respondent's attitude towards U.S. Financial Instituions.
 
 ```{r echo=TRUE}
 chisq.test(df.gss08$confinan,df.gss08$joblose)
 
 ```
 
+The chi-square statistic ($X^2$) is 12.8098 with 6 degrees of freedom (df=6). 
+The data provide not very convincing evidence that if there were no relationship between a Respondent's confidence in U.S. financial Insitutions and their feelings of job security, it would be unusual to see a chi-square statistic at least as extreme as 12.8098. Therefore we reject the null hypothesis in favor of the alternative.
 
 ### Part 5 Conclusion:
 
-This analysis tested the hypothesis that a Respondent's feelings of job security is related to their feelings about the U.S. Financial Insitutions at the 5% signficance level using a Chi-squared Test for Independence. We found a p-value of 0.04616. Oh so close! This p-value < 0.05 so we reject the NULL Hypothesis in favor of the Alternative hypothesis that the two variables ARE related. BUT it is too close to be very comfortable with this conclusion. Further analysis is necessary. It is worthwhile to do this same analysis on data in the years pre-2007/2008 Financial crisis and compare that result with this one. 
+This analysis tested the hypothesis that a Respondent's feelings of job security is related to their feelings about the U.S. Financial Insitutions at the 5% signficance level using a Chi-squared Test for Independence. We found a p-value of 0.04616. Oh so close! This p-value is less than 0.05 so we reject the NULL Hypothesis in favor of the Alternative hypothesis that the two variables ARE related. BUT it is too close to be very comfortable with this conclusion. Further analysis is necessary. 
+It is worthwhile to do this same analysis on data in the years pre-2007/2008 Financial crisis and compare that result to  this one. 
 
 Here is the same test on the two years directly before the financial crisis. A reasonable assumption might be that a Respondent to the gss survey did not relate as strongly their own job security with their confidence in U.S. Financial Insitutions before the crisis as after. One would think that such a catastrophic event, so mercilessly covered in the media would have a substantial negative effect. Especially since the unemployment rate spiked atfer the Financial Crisis of 2007/2008.
 
@@ -174,10 +183,13 @@ chisq.test(df.gss06$confinan,df.gss06$joblose)
 
 ```
 
-But with a p-value of 0.002751, the two appear even more related BEFORE the crisis than after. This suggests there are confounding variables that are affecting feelings about job security. Reasons other than confidence in U.S. Financial Insitutions.
+But with a p-value of 0.002751, the two appear even more related BEFORE the crisis than after. This suggests there are confounding variables that are affecting feelings about job security. Reasons other than confidence in U.S. Financial Insitutions because it would seem reasonable that people would be focussed on the financial crisis and this would in turn affect their feelings of job security.
 
 
-
+### Appendix - Example Data
+```{r echo=TRUE}
+subset(df.gss08,select=c("year","wrkstat","confinan","joblose"))[1:15,]
+```
 
 ### References:
 ####Data URL
